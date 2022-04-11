@@ -11,34 +11,17 @@ namespace Lain_Bootleg_DUX.GameContent
         public GraphicsDeviceManager graphics { get; private set; }
         public SpriteBatch spriteBatch { get; private set; }
 
-        public Color backgroundColor { get; set; } = Color.White;
-
-        private bool ticking = false;
+        public Color backgroundColor { get; set; } = Color.Black;
 
         public GameScene()
         {
             graphics = new GraphicsDeviceManager(this);
-           
+
             Window.AllowUserResizing = true;
-            Window.ClientSizeChanged += OnWindowSizeChange;
-            
+
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
         }
-
-        private int lastValue = 0;
-        private void TimerTick(object sender, EventArgs e)
-        {
-            bool paused = !ticking;
-            ticking = false;
-
-            //DLog.Log(this.sus + "");
-        }
-
-        private void OnWindowSizeChange(object sender, EventArgs e)
-        {
-            //Window.BeginScreenDeviceChange(false);
-        }       
 
         #region PassThrough
         public virtual void OnInitialize() { }
@@ -58,8 +41,6 @@ namespace Lain_Bootleg_DUX.GameContent
         public virtual void OnUpdate(GameTime gameTime) { }
         protected override void Update(GameTime gameTime)
         {
-            ticking = true;
-            //DLog.Log("Updating");
             OnUpdate(gameTime);
             base.Update(gameTime);
         }

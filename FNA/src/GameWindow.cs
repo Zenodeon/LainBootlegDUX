@@ -12,6 +12,7 @@ using System;
 using System.ComponentModel;
 
 using Microsoft.Xna.Framework.Input;
+using SDL2;
 #endregion
 
 namespace Microsoft.Xna.Framework
@@ -22,7 +23,7 @@ namespace Microsoft.Xna.Framework
 
 		[DefaultValue(false)]
 		public abstract bool AllowUserResizing
-		{ 
+		{
 			get;
 			set;
 		}
@@ -124,6 +125,24 @@ namespace Microsoft.Xna.Framework
 				ClientBounds.Height
 			);
 		}
+
+		public Vector2 GetWindowPosition()
+		{
+			SDL.SDL_GetWindowPosition(Handle, out int x, out int y);
+			return new Vector2(x, y);
+		}
+
+		public void SetWindowPosition(Vector2 newPosition)
+			=> SDL.SDL_SetWindowPosition(Handle, (int)newPosition.x, (int)newPosition.y);
+
+		public Vector2 GetWindowSize()
+		{
+			SDL.SDL_GetWindowSize(Handle, out int x, out int y);
+			return new Vector2(x, y);
+		}
+
+		public void SetWindowSize(Vector2 newSize)
+			=> SDL.SDL_SetWindowSize(Handle, (int)newSize.x, (int)newSize.y);
 
 		#endregion
 
