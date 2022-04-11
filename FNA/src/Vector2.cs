@@ -95,6 +95,9 @@ namespace Microsoft.Xna.Framework
 
 		#region Public Fields
 
+		public float x { get => X; set => X = value; }
+		public float y { get => Y; set => Y = value; }
+
 		/// <summary>
 		/// The x coordinate of this <see cref="Vector2"/>.
 		/// </summary>
