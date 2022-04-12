@@ -13,12 +13,16 @@ namespace Lain_Bootleg_DUX.GameContent
 
         public Color backgroundColor { get; set; } = Color.Black;
 
+        public bool fixedAspectRatio = false;
+        public Vector2 targetAspectRatioSize { get; private set; }
+        private float heightToWidthRatio;
+
         public GameScene()
         {
             graphics = new GraphicsDeviceManager(this);
 
             Window.AllowUserResizing = true;
-
+            Window.ClientSizeChanged += (object sender, EventArgs eventArgs) => ResizeWindowToAspectRation();
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
         }
@@ -27,6 +31,7 @@ namespace Lain_Bootleg_DUX.GameContent
         public virtual void OnInitialize() { }
         protected override void Initialize()
         {
+            lastWindowSize = Window.GetWindowSize();
             OnInitialize();
             base.Initialize();
         }
@@ -48,6 +53,8 @@ namespace Lain_Bootleg_DUX.GameContent
         public virtual void OnDraw(GameTime gameTime) { }
         protected override void Draw(GameTime gameTime)
         {
+            //ResizeWindowToAspectRation();
+
             GraphicsDevice.Clear(backgroundColor);
 
             spriteBatch.Begin();
@@ -58,5 +65,42 @@ namespace Lain_Bootleg_DUX.GameContent
         }
         #endregion
 
+        public void SetAspectRatioSize(Vector2 aspectRatioSize)
+        {
+            targetAspectRatioSize = aspectRatioSize;
+            heightToWidthRatio = aspectRatioSize.y / aspectRatioSize.x;
+        }
+
+        Vector2 lastWindowSize = Vector2.Zero;
+        private void ResizeWindowToAspectRation()
+        {
+            if (!fixedAspectRatio)
+                return;
+
+            Vector2 adjustedSize = Vector2.Zero;
+            Vector2 modifedSize = Window.GetWindowSize();
+
+            bool widthChanged = lastWindowSize.x != modifedSize.x;     
+            if (widthChanged)
+            {
+                adjustedSize = new Vector2(modifedSize.x, modifedSize.x * heightToWidthRatio);
+                DLog.Log(adjustedSize.x + " || " + adjustedSize.y);
+            }
+            else
+            {
+                bool heightChanged = lastWindowSize.y != modifedSize.y;
+                if (heightChanged)
+                {
+
+                }
+            }
+
+            if (adjustedSize != Vector2.Zero)
+            {
+                lastWindowSize = modifedSize;
+
+                Window.SetWindowSize(adjustedSize);
+            }
+        }
     }
 }
