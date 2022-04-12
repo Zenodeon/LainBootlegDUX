@@ -31,7 +31,7 @@ namespace Lain_Bootleg_DUX.GameContent
 
         public override void OnDraw(GameTime gameTime)
         {
-            Rectangle rectangle = graphics.GraphicsDevice.PresentationParameters.Bounds;
+            Rectangle rectangle = GraphicsDevice.PresentationParameters.Bounds;
             rectangle.Location = new Point(10, 0);   
             spriteBatch.Draw(texture, rectangle, Color.White);
         }

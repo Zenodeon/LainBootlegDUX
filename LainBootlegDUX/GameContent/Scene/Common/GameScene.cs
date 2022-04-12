@@ -15,6 +15,7 @@ namespace Lain_Bootleg_DUX.GameContent
 
         public bool fixedAspectRatio = false;
         public Vector2 targetAspectRatioSize { get; private set; }
+        private float widthToHeightRatio;
         private float heightToWidthRatio;
 
         public GameScene()
@@ -22,7 +23,8 @@ namespace Lain_Bootleg_DUX.GameContent
             graphics = new GraphicsDeviceManager(this);
 
             Window.AllowUserResizing = true;
-            Window.ClientSizeChanged += (object sender, EventArgs eventArgs) => ResizeWindowToAspectRation();
+            //Window.ClientSizeChanged += (object sender, EventArgs eventArgs) => ResizeWindowToAspectRation();
+            
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
         }
@@ -53,7 +55,7 @@ namespace Lain_Bootleg_DUX.GameContent
         public virtual void OnDraw(GameTime gameTime) { }
         protected override void Draw(GameTime gameTime)
         {
-            //ResizeWindowToAspectRation();
+            ResizeWindowToAspectRation();
 
             GraphicsDevice.Clear(backgroundColor);
 
@@ -68,7 +70,9 @@ namespace Lain_Bootleg_DUX.GameContent
         public void SetAspectRatioSize(Vector2 aspectRatioSize)
         {
             targetAspectRatioSize = aspectRatioSize;
-            heightToWidthRatio = aspectRatioSize.y / aspectRatioSize.x;
+
+            heightToWidthRatio = aspectRatioSize.x / aspectRatioSize.y;
+            widthToHeightRatio = aspectRatioSize.y / aspectRatioSize.x;
         }
 
         Vector2 lastWindowSize = Vector2.Zero;
@@ -80,20 +84,24 @@ namespace Lain_Bootleg_DUX.GameContent
             Vector2 adjustedSize = Vector2.Zero;
             Vector2 modifedSize = Window.GetWindowSize();
 
-            bool widthChanged = lastWindowSize.x != modifedSize.x;     
+            bool widthChanged = lastWindowSize.x != modifedSize.x;
+            bool heightChanged = lastWindowSize.y != modifedSize.y;
+
             if (widthChanged)
             {
-                adjustedSize = new Vector2(modifedSize.x, modifedSize.x * heightToWidthRatio);
-                DLog.Log(adjustedSize.x + " || " + adjustedSize.y);
+                adjustedSize = new Vector2(modifedSize.x, modifedSize.x * widthToHeightRatio);
+                DLog.Log("width");
             }
             else
             {
-                bool heightChanged = lastWindowSize.y != modifedSize.y;
                 if (heightChanged)
                 {
-
+                    adjustedSize = new Vector2(modifedSize.y * heightToWidthRatio, modifedSize.y);
                 }
             }
+
+            if (!(widthChanged || heightChanged))
+                return;
 
             if (adjustedSize != Vector2.Zero)
             {
