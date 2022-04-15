@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using SDL2;
 using System;
 using System.Threading;
 
@@ -23,7 +24,7 @@ namespace Lain_Bootleg_DUX.GameContent
             graphics = new GraphicsDeviceManager(this);
 
             Window.AllowUserResizing = true;
-            //Window.ClientSizeChanged += (object sender, EventArgs eventArgs) => ResizeWindowToAspectRation();
+            Window.ClientSizeChanged += WindowSizeChangedEnd;
             
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
@@ -48,6 +49,7 @@ namespace Lain_Bootleg_DUX.GameContent
         public virtual void OnUpdate(GameTime gameTime) { }
         protected override void Update(GameTime gameTime)
         {
+            //ResizeWindowToAspectRation();
             OnUpdate(gameTime);
             base.Update(gameTime);
         }
@@ -75,6 +77,18 @@ namespace Lain_Bootleg_DUX.GameContent
             widthToHeightRatio = aspectRatioSize.y / aspectRatioSize.x;
         }
 
+        private void WindowSizeChangedEnd(object sender, EventArgs eventArgs)
+        {
+            userScalingState = 0;
+
+            Window.SetWindowSize(lastWindowSize);
+
+            graphics.PreferredBackBufferWidth = (int)lastWindowSize.x;
+            graphics.PreferredBackBufferHeight = (int)lastWindowSize.y;
+            graphics.ApplyChanges();
+        }
+
+        int userScalingState = 0; // 0 : None | 1 : Width | 2 : Height
         Vector2 lastWindowSize = Vector2.Zero;
         private void ResizeWindowToAspectRation()
         {
@@ -84,31 +98,40 @@ namespace Lain_Bootleg_DUX.GameContent
             Vector2 adjustedSize = Vector2.Zero;
             Vector2 modifedSize = Window.GetWindowSize();
 
-            bool widthChanged = lastWindowSize.x != modifedSize.x;
-            bool heightChanged = lastWindowSize.y != modifedSize.y;
+            if (userScalingState == 0)
+            {
+                if (lastWindowSize.x != modifedSize.x)
+                    userScalingState++;
 
-            if (widthChanged)
-            {
-                adjustedSize = new Vector2(modifedSize.x, modifedSize.x * widthToHeightRatio);
-                DLog.Log("width");
-            }
-            else
-            {
-                if (heightChanged)
-                {
-                    adjustedSize = new Vector2(modifedSize.y * heightToWidthRatio, modifedSize.y);
-                }
+                if (lastWindowSize.y != modifedSize.y)
+                    if (userScalingState == 0)
+                        userScalingState += 2;
             }
 
-            if (!(widthChanged || heightChanged))
-                return;
-
-            if (adjustedSize != Vector2.Zero)
+            switch (userScalingState)
             {
-                lastWindowSize = modifedSize;
+                case 0:          
+                    return;
 
+                case 1:
+                    adjustedSize = new Vector2(modifedSize.X, (int)(modifedSize.x * widthToHeightRatio));
+                    break;
+
+                case 2:
+                    adjustedSize = new Vector2((int)(modifedSize.y * heightToWidthRatio), modifedSize.y);
+                    break;
+            }
+
+            if (adjustedSize != lastWindowSize)
+            {
                 Window.SetWindowSize(adjustedSize);
+                
+                graphics.PreferredBackBufferWidth = (int)adjustedSize.x;
+                graphics.PreferredBackBufferHeight = (int)adjustedSize.y;
+                graphics.ApplyChanges();
             }
+
+            lastWindowSize = adjustedSize;
         }
     }
 }

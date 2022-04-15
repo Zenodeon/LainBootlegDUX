@@ -20,8 +20,8 @@ namespace Lain_Bootleg_DUX.GameContent
 
         public override void OnLoadContent()
         {
-            texture = GraphicsDevice.LoadTexture2D("Asset/lainSprite/upscaledBootlegSprites/196.png");
-            SetAspectRatioSize(new Vector2(500, 300));
+            texture = GraphicsDevice.LoadTexture2D("Asset/lainSprite/upscaledBootlegSprites/460.png");
+            SetAspectRatioSize(new Vector2(200, 128));
         }
 
         public override void OnUpdate(GameTime gameTime)
@@ -32,7 +32,7 @@ namespace Lain_Bootleg_DUX.GameContent
         public override void OnDraw(GameTime gameTime)
         {
             Rectangle rectangle = GraphicsDevice.PresentationParameters.Bounds;
-            rectangle.Location = new Point(10, 0);   
+            rectangle.Location = new Point(0, 0);   
             spriteBatch.Draw(texture, rectangle, Color.White);
         }
     }
