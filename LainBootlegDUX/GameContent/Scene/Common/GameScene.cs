@@ -20,6 +20,8 @@ namespace LainBootlegDUX.GameContent
         private float widthToHeightRatio;
         private float heightToWidthRatio;
 
+        public List<GameEntity> sceneEntities = new List<GameEntity>();
+
         public GameScene()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -29,8 +31,6 @@ namespace LainBootlegDUX.GameContent
             
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
-
-            //LainBootlegDUX
         }
 
         #region PassThrough
@@ -38,7 +38,12 @@ namespace LainBootlegDUX.GameContent
         protected override void Initialize()
         {
             lastWindowSize = Window.GetWindowSize();
+
+            foreach (GameEntity entity in sceneEntities)
+                entity.OnInitialize();
+
             OnInitialize();
+
             base.Initialize();
         }
 
@@ -46,14 +51,21 @@ namespace LainBootlegDUX.GameContent
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
+
+            foreach (GameEntity entity in sceneEntities)
+                entity.OnLoadContent();
+
             OnLoadContent();
         }
 
         public virtual void OnUpdate(GameTime gameTime) { }
         protected override void Update(GameTime gameTime)
         {
-            //ResizeWindowToAspectRation();
+            foreach (GameEntity entity in sceneEntities)
+                entity.OnUpdate(gameTime);
+
             OnUpdate(gameTime);
+
             base.Update(gameTime);
         }
 
@@ -65,7 +77,12 @@ namespace LainBootlegDUX.GameContent
             GraphicsDevice.Clear(backgroundColor);
 
             spriteBatch.Begin();
+
+            foreach (GameEntity entity in sceneEntities)
+                entity.OnDraw(gameTime);
+
             OnDraw(gameTime);
+
             spriteBatch.End();
 
             base.Draw(gameTime);
