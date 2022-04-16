@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace Lain_Bootleg_DUX.GameContent
+namespace LainBootlegDUX.GameContent
 {
     public class LainInterfaceScene : GameScene
     {
@@ -10,7 +10,7 @@ namespace Lain_Bootleg_DUX.GameContent
 
         public LainInterfaceScene()
         {
-
+           
         }
 
         public override void OnInitialize()
@@ -21,6 +21,7 @@ namespace Lain_Bootleg_DUX.GameContent
         public override void OnLoadContent()
         {
             texture = GraphicsDevice.LoadTexture2D("Asset/lainSprite/upscaledBootlegSprites/460.png");
+            Window.SetWindowSize(new Vector2(200, 128));
             SetAspectRatioSize(new Vector2(200, 128));
         }
 

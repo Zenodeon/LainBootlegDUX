@@ -1,8 +1,8 @@
 ﻿using System;
-using Lain_Bootleg_DUX.GameContent;
+using LainBootlegDUX.GameContent;
 using System.Threading;
 
-namespace Lain_Bootleg_DUX
+namespace LainBootlegDUX
 {
     public static class LainProgram
     {

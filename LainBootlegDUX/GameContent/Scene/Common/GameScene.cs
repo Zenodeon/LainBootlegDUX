@@ -1,11 +1,12 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SDL2;
 using System;
 using System.Threading;
 
-namespace Lain_Bootleg_DUX.GameContent
+namespace LainBootlegDUX.GameContent
 {
     public class GameScene : Game
     {
@@ -28,6 +29,8 @@ namespace Lain_Bootleg_DUX.GameContent
             
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+
+            //LainBootlegDUX
         }
 
         #region PassThrough

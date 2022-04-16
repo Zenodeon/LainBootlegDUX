@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Lain_Bootleg_DUX.GameContent.Scene
+namespace LainBootlegDUX.GameContent.Scene
 {
     public class PrefabScene : GameScene
     {

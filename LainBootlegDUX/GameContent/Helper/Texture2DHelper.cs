@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Lain_Bootleg_DUX.GameContent
+namespace LainBootlegDUX.GameContent
 {
     public static class Texture2DHelper
     {

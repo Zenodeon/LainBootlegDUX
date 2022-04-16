@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Lain_Bootleg_DUX
+namespace LainBootlegDUX
 {
     public static class DLog
     {
