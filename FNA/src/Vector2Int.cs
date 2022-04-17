@@ -39,5 +39,10 @@ namespace Microsoft.Xna.Framework
 
 		public static bool operator ==(Vector2Int vectorA, Vector2Int vectorB)
 			=> vectorA.vector == vectorB.vector;
-	}
+
+        public override string ToString()
+        {
+			return $"{{ x : {x}, y : {y} }}";
+        }
+    }
 }
