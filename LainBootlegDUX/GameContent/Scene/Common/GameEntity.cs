@@ -11,22 +11,32 @@ namespace LainBootlegDUX.GameContent
 {
     public class GameEntity
     {
-        public void OnInitialize()
+        public GameScene parent;
+
+        public GraphicsDevice graphicDevice => parent.GraphicsDevice;
+        public SpriteBatch spriteBth => parent.spriteBatch;
+
+        public GameEntity(GameScene scene)
+        {
+            parent = scene;
+        }
+
+        public virtual void OnInitialize()
         {
 
         }
 
-        public void OnLoadContent()
+        public virtual void OnLoadContent()
         {
 
         }
 
-        public void OnUpdate(GameTime gameTime)
+        public virtual void OnUpdate(GameTime gameTime)
         {
 
         }
 
-        public void OnDraw(GameTime gameTime)
+        public virtual void OnDraw(GameTime gameTime)
         {
 
         }
