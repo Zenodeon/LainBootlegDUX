@@ -93,8 +93,9 @@ namespace LainBootlegDUX.GameContent
         {
             targetAspectRatioSize = aspectRatioSize;
 
-            heightToWidthRatio = aspectRatioSize.x / aspectRatioSize.y;
-            widthToHeightRatio = aspectRatioSize.y / aspectRatioSize.x;
+            Vector2 ratioSize = aspectRatioSize.vector;
+            heightToWidthRatio = ratioSize.x / ratioSize.y;
+            widthToHeightRatio = ratioSize.y / ratioSize.x;
         }
 
         private void WindowSizeChangedEnd(object sender, EventArgs eventArgs)
@@ -133,12 +134,14 @@ namespace LainBootlegDUX.GameContent
                 case 2:
                     adjustedSize = new Vector2Int(modifedSize.y * heightToWidthRatio, modifedSize.y);
                     break;
+
+                default: return;
             }
 
             if (adjustedSize != lastWindowSize)
                 ChangeWindowSize(adjustedSize);
 
-                lastWindowSize = adjustedSize;
+            lastWindowSize = adjustedSize;
         }
 
         public void ChangeWindowSize(Vector2Int newSize)

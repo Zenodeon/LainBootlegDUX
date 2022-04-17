@@ -23,7 +23,7 @@ namespace LainBootlegDUX.GameContent
 
         public override void OnInitialize()
         {
-            parent.fixedAspectRatio = false;
+            parent.fixedAspectRatio = true;
         }
 
         public override void OnLoadContent()
