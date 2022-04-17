@@ -16,7 +16,7 @@ namespace LainBootlegDUX.GameContent
         public Color backgroundColor { get; set; } = Color.Black;
 
         public bool fixedAspectRatio = false;
-        public Vector2 targetAspectRatioSize { get; private set; }
+        public Vector2Int targetAspectRatioSize { get; private set; }
         private float widthToHeightRatio;
         private float heightToWidthRatio;
 
@@ -89,7 +89,7 @@ namespace LainBootlegDUX.GameContent
         }
         #endregion
 
-        public void SetAspectRatioSize(Vector2 aspectRatioSize)
+        public void SetAspectRatioSize(Vector2Int aspectRatioSize)
         {
             targetAspectRatioSize = aspectRatioSize;
 
@@ -101,22 +101,18 @@ namespace LainBootlegDUX.GameContent
         {
             userScalingState = 0;
 
-            Window.SetWindowSize(lastWindowSize);
-
-            graphics.PreferredBackBufferWidth = (int)lastWindowSize.x;
-            graphics.PreferredBackBufferHeight = (int)lastWindowSize.y;
-            graphics.ApplyChanges();
+            ChangeWindowSize(lastWindowSize);
         }
 
         int userScalingState = 0; // 0 : None | 1 : Width | 2 : Height
-        Vector2 lastWindowSize = Vector2.Zero;
+        Vector2Int lastWindowSize = Vector2Int.zero;
         private void ResizeWindowToAspectRation()
         {
             if (!fixedAspectRatio)
                 return;
 
-            Vector2 adjustedSize = Vector2.Zero;
-            Vector2 modifedSize = Window.GetWindowSize();
+            Vector2Int adjustedSize = Vector2Int.zero;
+            Vector2Int modifedSize = Window.GetWindowSize();
 
             if (userScalingState == 0)
             {
@@ -130,28 +126,28 @@ namespace LainBootlegDUX.GameContent
 
             switch (userScalingState)
             {
-                case 0:          
-                    return;
-
                 case 1:
-                    adjustedSize = new Vector2(modifedSize.X, (int)(modifedSize.x * widthToHeightRatio));
+                    adjustedSize = new Vector2Int(modifedSize.x, modifedSize.x * widthToHeightRatio);
                     break;
 
                 case 2:
-                    adjustedSize = new Vector2((int)(modifedSize.y * heightToWidthRatio), modifedSize.y);
+                    adjustedSize = new Vector2Int(modifedSize.y * heightToWidthRatio, modifedSize.y);
                     break;
             }
 
             if (adjustedSize != lastWindowSize)
-            {
-                Window.SetWindowSize(adjustedSize);
-                
-                graphics.PreferredBackBufferWidth = (int)adjustedSize.x;
-                graphics.PreferredBackBufferHeight = (int)adjustedSize.y;
-                graphics.ApplyChanges();
-            }
+                ChangeWindowSize(adjustedSize);
 
-            lastWindowSize = adjustedSize;
+                lastWindowSize = adjustedSize;
+        }
+
+        public void ChangeWindowSize(Vector2Int newSize)
+        {
+            Window.SetWindowSize(newSize);
+
+            graphics.PreferredBackBufferWidth = newSize.x;
+            graphics.PreferredBackBufferHeight = newSize.y;
+            graphics.ApplyChanges();
         }
     }
 }

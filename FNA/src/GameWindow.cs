@@ -126,23 +126,23 @@ namespace Microsoft.Xna.Framework
 			);
 		}
 
-		public Vector2 GetWindowPosition()
+		public Vector2Int GetWindowPosition()
 		{
 			SDL.SDL_GetWindowPosition(Handle, out int x, out int y);
-			return new Vector2(x, y);
+			return new Vector2Int(x, y);
 		}
 
-		public void SetWindowPosition(Vector2 newPosition)
-			=> SDL.SDL_SetWindowPosition(Handle, (int)newPosition.x, (int)newPosition.y);
+		public void SetWindowPosition(Vector2Int newPosition)
+			=> SDL.SDL_SetWindowPosition(Handle, newPosition.x, newPosition.y);
 
-		public Vector2 GetWindowSize()
+		public Vector2Int GetWindowSize()
 		{
 			SDL.SDL_GetWindowSize(Handle, out int x, out int y);
-			return new Vector2(x, y);
+			return new Vector2Int(x, y);
 		}
 
-		public void SetWindowSize(Vector2 newSize)
-			=> SDL.SDL_SetWindowSize(Handle, (int)newSize.x, (int)newSize.y);
+		public void SetWindowSize(Vector2Int newSize)
+			=> SDL.SDL_SetWindowSize(Handle, newSize.x, newSize.y);
 
 		#endregion
 
