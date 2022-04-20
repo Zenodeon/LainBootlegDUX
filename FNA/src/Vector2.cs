@@ -1166,6 +1166,11 @@ namespace Microsoft.Xna.Framework
 			return value1;
 		}
 
+		public static implicit operator Vector2Int(Vector2 vector)
+		{
+			return new Vector2Int(vector); ;
+		}
+
 		#endregion
 	}
 }

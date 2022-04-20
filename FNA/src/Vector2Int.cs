@@ -34,15 +34,30 @@ namespace Microsoft.Xna.Framework
 			vector = vector2;
 		}
 
+		public static Vector2Int operator +(Vector2Int vectorA, Vector2Int vectorB)
+			=> new Vector2Int(vectorA.vector + vectorB.vector);
+
+		public static Vector2Int operator -(Vector2Int vectorA, Vector2Int vectorB)
+			=> new Vector2Int(vectorA.vector - vectorB.vector);
+
+		public static Vector2Int operator /(Vector2Int vectorA, Vector2Int vectorB)
+			=> new Vector2Int(vectorA.vector / vectorB.vector);
+
+		public static Vector2Int operator *(Vector2Int vectorA, Vector2Int vectorB)
+			=> new Vector2Int(vectorA.vector * vectorB.vector);
+
 		public static bool operator !=(Vector2Int vectorA, Vector2Int vectorB)
 			=> !(vectorA == vectorB);
 
 		public static bool operator ==(Vector2Int vectorA, Vector2Int vectorB)
 			=> vectorA.vector == vectorB.vector;
 
-        public override string ToString()
-        {
+		public static implicit operator Vector2(Vector2Int vector2Int)
+			=> new Vector2(vector2Int.x, vector2Int.y);
+
+		public override string ToString()
+		{
 			return $"{{ x : {x}, y : {y} }}";
-        }
-    }
+		}
+	}
 }
