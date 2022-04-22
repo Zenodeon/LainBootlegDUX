@@ -35,6 +35,8 @@ namespace Microsoft.Xna.Framework
 			internal set;
 		}
 
+		public float deltaTime => (float)ElapsedGameTime.TotalSeconds;
+
 		#endregion
 
 		#region Public Constructors
