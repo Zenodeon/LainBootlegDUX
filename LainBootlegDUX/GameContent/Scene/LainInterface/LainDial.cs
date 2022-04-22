@@ -14,14 +14,15 @@ namespace LainBootlegDUX.GameContent
     {
         Texture2D texture;
 
-        private Vector2Int dialDefaultWindowSize = new Vector2Int(200, 128);
-        private Vector2Int dialMinOffset = new Vector2Int(36, 36);
+        private Vector2Int dialMiniWindowSize = new Vector2Int(164, 92);
+        private Vector2Int dialExtentionWindowSize = new Vector2Int(200, 200);
+        private Vector2Int dialMiniImageOffset = new Vector2Int(36, 36);
 
-        private DialMode currentMode = DialMode.Extented;
+        private DialMode currentMode = DialMode.None;
         private DialMode targetMode;
-        private Vector2 currentSize;
+        private Vector2 lastSize;
         private Vector2 targetSize;
-        private float transitionSpeed = 1;
+        private float transitionSpeed = 10;
         private float transitionState = 0;
         private bool updateTransition = false;
 
@@ -33,7 +34,8 @@ namespace LainBootlegDUX.GameContent
         {
             parent.fixedAspectRatio = true;
 
-            SwitchMode(DialMode.Mini, instant: true);
+            UpdateWindowSize(dialMiniWindowSize);
+            currentMode = DialMode.Mini;
         }
 
         public override void OnLoadContent()
@@ -58,17 +60,20 @@ namespace LainBootlegDUX.GameContent
                 if (Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.E))
                 {
                     release = false;
-                    DialMode dialMode = currentMode == DialMode.Extented ? DialMode.Mini : DialMode.Extented;
-                    SwitchMode(dialMode, true);
+                    if (!updateTransition)
+                    {
+                        DialMode dialMode = currentMode == DialMode.Extented ? DialMode.Mini : DialMode.Extented;
+                        SwitchMode(dialMode);
+                    }
                 }
 
             UpdateModeTransition(gt);
 
-            Rectangle rectangle = graphicDevice.PresentationParameters.Bounds;
-            int scaledXOffset = (int)MathU.MapClampRanged(rectangle.Width, 0, dialDefaultWindowSize.x, 0, dialMinOffset.x);
-            int scaledYOffset = (int)MathU.MapClampRanged(rectangle.Height, 0, dialDefaultWindowSize.y, 0, dialMinOffset.y);
-            rectangle.Location = new Point(scaledXOffset, scaledYOffset);
-            spriteBth.Draw(texture, rectangle, Color.White);
+            //Rectangle rectangle = graphicDevice.PresentationParameters.Bounds;
+            //int scaledXOffset = (int)MathU.MapClampRanged(rectangle.Width, 0, dialMiniWindowSize.x, 0, dialMiniWindowSize.x);
+            //int scaledYOffset = (int)MathU.MapClampRanged(rectangle.Height, 0, dialMiniWindowSize.y, 0, dialMiniWindowSize.y);
+            //rectangle.Location = new Point(scaledXOffset, scaledYOffset);
+            //spriteBth.Draw(texture, rectangle, Color.White);
         }
 
         private void SwitchMode(DialMode mode, bool instant = false)
@@ -77,27 +82,30 @@ namespace LainBootlegDUX.GameContent
                 return;
 
             targetMode = mode;
-            targetSize = targetMode == DialMode.Mini? dialDefaultWindowSize - dialMinOffset : dialDefaultWindowSize;
+            targetSize = targetMode == DialMode.Mini? dialMiniWindowSize : dialExtentionWindowSize;
+
+            lastSize = parent.Window.GetWindowSize();
+
+            Vector2 relativeScale = GetRelativeScale();
+            targetSize *= relativeScale;
 
             if (!instant)
                 updateTransition = true;
             else
             {
                 currentMode = targetMode;
-                currentSize = targetSize;
-                UpdateWindowSize(currentSize);
+                UpdateWindowSize(targetSize);
             }
+        }
 
-            //DLog.Log(targetSize + "");
+        private Vector2 GetRelativeScale()
+        {
+            Vector2 defaultModeSize = currentMode == DialMode.Mini ? dialMiniWindowSize : dialExtentionWindowSize;
 
-            //switch (mode)
-            //{
-            //    case DialMode.Mini:
-            //        break;
+            float relativeX = MathU.MapClampRanged(lastSize.x, 0, defaultModeSize.x, 0, 1);
+            float relativeY = MathU.MapClampRanged(lastSize.y, 0, defaultModeSize.y, 0, 1);
 
-            //    case DialMode.Extented:
-            //        break;
-            //}
+            return new Vector2(relativeX, relativeY);
         }
 
         private void UpdateModeTransition(GameTime gt)
@@ -107,22 +115,32 @@ namespace LainBootlegDUX.GameContent
 
             parent.Window.AllowUserResizing = false;
 
-            transitionState += (float)gt.ElapsedGameTime.TotalSeconds * transitionSpeed;
-            currentSize = Vector2.Lerp(currentSize, targetSize, transitionState);
+            transitionState += gt.deltaTime * transitionSpeed;
+            transitionState = Math.Clamp(transitionState, 0, 1);
+            Vector2 newSize = Vector2.Lerp(lastSize, targetSize, transitionState);
 
-            DLog.Log(currentSize + "");
+            UpdateWindowSize(newSize);
 
-            //UpdateWindowSize(currentSize);
+            if (transitionState == 1)
+            {
+                updateTransition = false;
+
+                currentMode = targetMode;
+                transitionState = 0;
+
+                parent.Window.AllowUserResizing = true;
+            }
         }
 
-        private void UpdateWindowSize(Vector2Int newSize)
+        private void UpdateWindowSize(Vector2Int relativeSize)
         {
-            parent.Window.SetWindowSize(newSize);
-            parent.SetAspectRatioSize(newSize);
+            parent.Window.SetWindowSize(relativeSize);
+            parent.SetAspectRatioSize(relativeSize);
         }
 
         public enum DialMode
         {
+            None,
             Mini,
             Extented
         }
