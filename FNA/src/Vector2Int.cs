@@ -59,5 +59,10 @@ namespace Microsoft.Xna.Framework
 		{
 			return $"{{ x : {x}, y : {y} }}";
 		}
+
+		public static implicit operator string(Vector2Int vector)
+		{
+			return vector.ToString();
+		}
 	}
 }

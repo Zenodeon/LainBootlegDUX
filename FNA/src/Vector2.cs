@@ -1171,6 +1171,11 @@ namespace Microsoft.Xna.Framework
 			return new Vector2Int(vector); ;
 		}
 
+		public static implicit operator string(Vector2 vector)
+		{
+			return $"{{ x : {vector.x}, y : {vector.y} }}";
+		}
+
 		#endregion
 	}
 }
