@@ -11,15 +11,17 @@ namespace LainBootlegDUX.GameContent
 {
     public class GameEntity
     {
+        public string name;
         public GameScene parent;
 
         public GraphicsDevice graphicDevice => parent.GraphicsDevice;
         public SpriteBatch spriteBth => parent.spriteBatch;
 
-        public List<GameEntity> subEntities = new List<GameEntity>();
+        private Dictionary<string, GameEntity> subEntities = new Dictionary<string, GameEntity>();
 
-        public GameEntity(GameScene scene)
+        public GameEntity(string entityName, GameScene scene)
         {
+            name = entityName;
             parent = scene;
         }
 
@@ -29,11 +31,8 @@ namespace LainBootlegDUX.GameContent
         {
             OnInitialize();
 
-            foreach (GameEntity entity in subEntities)
-            {
-                entity.parent = parent;
+            foreach (GameEntity entity in subEntities.Values)
                 entity.OnInitialize();
-            }
         }
 
         public virtual void OnLoadContent() { }
@@ -41,7 +40,7 @@ namespace LainBootlegDUX.GameContent
         {
             OnLoadContent();
 
-            foreach (GameEntity entity in subEntities)
+            foreach (GameEntity entity in subEntities.Values)
                 entity.OnLoadContent();
         }
 
@@ -50,7 +49,7 @@ namespace LainBootlegDUX.GameContent
         {
             OnUpdate(gameTime);
 
-            foreach (GameEntity entity in subEntities)
+            foreach (GameEntity entity in subEntities.Values)
                 entity.OnUpdate(gameTime);
         }
 
@@ -59,9 +58,39 @@ namespace LainBootlegDUX.GameContent
         {
             OnDraw(gameTime);
 
-            foreach (GameEntity entity in subEntities)
+            foreach (GameEntity entity in subEntities.Values)
                 entity.OnDraw(gameTime);
         }
         #endregion
+
+        public T AddSubEntity<T>(GameEntity entity)
+        {
+            if (AddSubEntity(entity))
+                return (T)Convert.ChangeType(entity, typeof(T));
+            else
+                return default(T);
+        }
+
+        public bool AddSubEntity(GameEntity entity)
+        {
+            if (!subEntities.ContainsKey(entity.name))
+            {
+                subEntities.Add(entity.name, entity);
+                return true;
+            }
+            else
+            {
+                DLog.Alert($"Entity can't contain Sub-Entitys of the same name : '{entity.name}'");
+                return false;
+            }
+        }
+
+        public T GetSubEntity<T>(string entityName)
+        {
+            if (subEntities.ContainsKey(entityName))
+                return (T)Convert.ChangeType(subEntities[entityName], typeof(T));
+            else
+                return default(T);
+        }
     }
 }

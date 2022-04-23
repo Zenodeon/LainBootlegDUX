@@ -12,7 +12,7 @@ namespace LainBootlegDUX.GameContent
 {
     public class PrefabEntity : GameEntity
     {
-        public PrefabEntity(GameScene scene) : base(scene)
+        public PrefabEntity(string entityName, GameScene scene) : base(entityName, scene)
         {
         }
 

@@ -20,7 +20,7 @@ namespace LainBootlegDUX.GameContent
         private float widthToHeightRatio;
         private float heightToWidthRatio;
 
-        public List<GameEntity> sceneEntities = new List<GameEntity>();
+        private Dictionary<string, GameEntity> sceneEntities = new Dictionary<string, GameEntity>();
 
         public GameScene()
         {
@@ -41,7 +41,7 @@ namespace LainBootlegDUX.GameContent
 
             OnInitialize();
 
-            foreach (GameEntity entity in sceneEntities)
+            foreach (GameEntity entity in sceneEntities.Values)
                 entity.Initialize();
 
             base.Initialize();
@@ -54,7 +54,7 @@ namespace LainBootlegDUX.GameContent
 
             OnLoadContent();
 
-            foreach (GameEntity entity in sceneEntities)
+            foreach (GameEntity entity in sceneEntities.Values)
                 entity.LoadContent();
         }
 
@@ -63,7 +63,7 @@ namespace LainBootlegDUX.GameContent
         {
             OnUpdate(gameTime);
 
-            foreach (GameEntity entity in sceneEntities)
+            foreach (GameEntity entity in sceneEntities.Values)
                 entity.Update(gameTime);
 
             base.Update(gameTime);
@@ -80,7 +80,7 @@ namespace LainBootlegDUX.GameContent
 
             OnDraw(gameTime);
 
-            foreach (GameEntity entity in sceneEntities)
+            foreach (GameEntity entity in sceneEntities.Values)
                 entity.Draw(gameTime);
 
             spriteBatch.End();
@@ -151,6 +151,35 @@ namespace LainBootlegDUX.GameContent
             graphics.PreferredBackBufferWidth = newSize.x;
             graphics.PreferredBackBufferHeight = newSize.y;
             graphics.ApplyChanges();
+        }
+
+        public T AddEntity<T>(GameEntity entity)
+        {
+            if (AddEntity(entity))
+                return (T)Convert.ChangeType(entity, typeof(T));
+            else
+                return default(T);
+        }
+
+        public bool AddEntity(GameEntity entity)
+        {
+            if (!sceneEntities.ContainsKey(entity.name))
+            {
+                sceneEntities.Add(entity.name, entity);
+                return true;
+            }
+            else
+            {
+                DLog.Alert($"Scene can't contain Entitys of the same name : '{entity.name}'");
+                return false;
+            }
+        }
+        public T GetEntity<T>(string entityName)
+        {
+            if (sceneEntities.ContainsKey(entityName))
+                return (T)Convert.ChangeType(sceneEntities[entityName], typeof(T));
+            else
+                return default(T);
         }
     }
 }
