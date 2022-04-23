@@ -39,10 +39,10 @@ namespace LainBootlegDUX.GameContent
         {
             lastWindowSize = Window.GetWindowSize();
 
-            foreach (GameEntity entity in sceneEntities)
-                entity.OnInitialize();
-
             OnInitialize();
+
+            foreach (GameEntity entity in sceneEntities)
+                entity.Initialize();
 
             base.Initialize();
         }
@@ -52,19 +52,19 @@ namespace LainBootlegDUX.GameContent
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            foreach (GameEntity entity in sceneEntities)
-                entity.OnLoadContent();
-
             OnLoadContent();
+
+            foreach (GameEntity entity in sceneEntities)
+                entity.LoadContent();
         }
 
         public virtual void OnUpdate(GameTime gameTime) { }
         protected override void Update(GameTime gameTime)
         {
-            foreach (GameEntity entity in sceneEntities)
-                entity.OnUpdate(gameTime);
-
             OnUpdate(gameTime);
+
+            foreach (GameEntity entity in sceneEntities)
+                entity.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -78,10 +78,10 @@ namespace LainBootlegDUX.GameContent
 
             spriteBatch.Begin();
 
-            foreach (GameEntity entity in sceneEntities)
-                entity.OnDraw(gameTime);
-
             OnDraw(gameTime);
+
+            foreach (GameEntity entity in sceneEntities)
+                entity.Draw(gameTime);
 
             spriteBatch.End();
 
