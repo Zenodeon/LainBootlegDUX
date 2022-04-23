@@ -12,13 +12,11 @@ namespace LainBootlegDUX.GameContent
 {
     public class LainDial : GameEntity
     {
-        Texture2D texture;
+        public Vector2Int dialMiniWindowSize { get; private set; } = new Vector2Int(164, 92);
+        public Vector2Int dialExtentionWindowSize { get; private set; } = new Vector2Int(200, 200);
+        public Vector2Int dialMiniImageOffset { get; private set; } = new Vector2Int(36, 36);
 
-        private Vector2Int dialMiniWindowSize = new Vector2Int(164, 92);
-        private Vector2Int dialExtentionWindowSize = new Vector2Int(200, 200);
-        private Vector2Int dialMiniImageOffset = new Vector2Int(36, 36);
-
-        private DialMode currentMode = DialMode.None;
+        public DialMode currentMode { get; private set; } = DialMode.None;
         private DialMode targetMode;
         private Vector2 lastSize;
         private Vector2 targetSize;
@@ -26,9 +24,12 @@ namespace LainBootlegDUX.GameContent
         private float transitionState = 0;
         private bool updateTransition = false;
 
-        public LainDial(GameScene scene) : base(scene)
+        Dial dial;
+
+        public LainDial(string entityName, GameScene scene) : base(entityName, scene)
         {
-            DLog.Log("LainDial");
+            dial = AddSubEntity<Dial>(new Dial("Dial", scene));
+            dial.lainDial = this;
         }
 
         public override void OnInitialize()
@@ -41,8 +42,6 @@ namespace LainBootlegDUX.GameContent
 
         public override void OnLoadContent()
         {
-            texture = graphicDevice.LoadTexture2D("Asset/lainSprite/upscaledBootlegSprites/460.png");
-
 
         }
 
@@ -69,12 +68,6 @@ namespace LainBootlegDUX.GameContent
                 }
 
             UpdateWindowModeTransition(gt);
-
-            //Rectangle rectangle = graphicDevice.PresentationParameters.Bounds;
-            //int scaledXOffset = (int)MathU.MapClampRanged(rectangle.Width, 0, dialMiniWindowSize.x, 0, dialMiniWindowSize.x);
-            //int scaledYOffset = (int)MathU.MapClampRanged(rectangle.Height, 0, dialMiniWindowSize.y, 0, dialMiniWindowSize.y);
-            //rectangle.Location = new Point(scaledXOffset, scaledYOffset);
-            //spriteBth.Draw(texture, rectangle, Color.White);
         }
 
         private void SwitchMode(DialMode mode, bool instant = false)

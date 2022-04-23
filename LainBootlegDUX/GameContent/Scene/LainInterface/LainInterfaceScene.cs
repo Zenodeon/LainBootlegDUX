@@ -8,7 +8,7 @@ namespace LainBootlegDUX.GameContent
     {
         public LainInterfaceScene()
         {
-            sceneEntities.Add(new LainDial(this));
+            AddEntity(new LainDial("LainDial", this));
         }
 
         public override void OnInitialize()
