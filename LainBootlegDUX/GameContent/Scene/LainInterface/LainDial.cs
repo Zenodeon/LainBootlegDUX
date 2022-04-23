@@ -16,6 +16,11 @@ namespace LainBootlegDUX.GameContent
         public Vector2Int dialExtentionWindowSize { get; private set; } = new Vector2Int(200, 200);
         public Vector2Int dialMiniImageOffset { get; private set; } = new Vector2Int(36, 36);
 
+        //Bigger Version
+        //public Vector2Int dialMiniWindowSize { get; private set; } = new Vector2Int(246, 138);
+        //public Vector2Int dialExtentionWindowSize { get; private set; } = new Vector2Int(300, 300);
+        //public Vector2Int dialMiniImageOffset { get; private set; } = new Vector2Int(54, 54);
+
         public DialMode currentMode { get; private set; } = DialMode.None;
         private DialMode targetMode;
         private Vector2 lastSize;
