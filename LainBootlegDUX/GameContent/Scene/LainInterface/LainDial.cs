@@ -28,6 +28,7 @@ namespace LainBootlegDUX.GameContent
 
         public LainDial(GameScene scene) : base(scene)
         {
+            DLog.Log("LainDial");
         }
 
         public override void OnInitialize()
@@ -67,7 +68,7 @@ namespace LainBootlegDUX.GameContent
                     }
                 }
 
-            UpdateModeTransition(gt);
+            UpdateWindowModeTransition(gt);
 
             //Rectangle rectangle = graphicDevice.PresentationParameters.Bounds;
             //int scaledXOffset = (int)MathU.MapClampRanged(rectangle.Width, 0, dialMiniWindowSize.x, 0, dialMiniWindowSize.x);
@@ -108,7 +109,7 @@ namespace LainBootlegDUX.GameContent
             return new Vector2(relativeX, relativeY);
         }
 
-        private void UpdateModeTransition(GameTime gt)
+        private void UpdateWindowModeTransition(GameTime gt)
         {
             if (!updateTransition)
                 return;
