@@ -12,7 +12,7 @@ namespace LainBootlegDUX.GameContent
 {
     public class LainDial : GameEntity
     {
-        public Vector2Int dialMiniWindowSize { get; private set; } = new Vector2Int(164, 92);
+        public Vector2Int dialMiniWindowSize { get; private set; } = new Vector2Int(164, 74); //92
         public Vector2Int dialExtentionWindowSize { get; private set; } = new Vector2Int(200, 200);
         public Vector2Int dialMiniImageOffset { get; private set; } = new Vector2Int(36, 36);
 
@@ -25,11 +25,13 @@ namespace LainBootlegDUX.GameContent
         private DialMode targetMode;
         private Vector2 lastSize;
         private Vector2 targetSize;
-        private float transitionSpeed = 10;
+        private float transitionSpeed = 20;
         private float transitionState = 0;
         private bool updateTransition = false;
 
         Dial dial;
+
+        public event EventHandler<DialMode> dialModeChange;
 
         public LainDial(string entityName, GameScene scene) : base(entityName, scene)
         {
@@ -39,15 +41,15 @@ namespace LainBootlegDUX.GameContent
 
         public override void OnInitialize()
         {
+            parent.Window.AllowUserResizing = true;
             parent.fixedAspectRatio = true;
-
-            UpdateWindowSize(dialMiniWindowSize);
-            currentMode = DialMode.Mini;
         }
 
         public override void OnLoadContent()
         {
-
+            UpdateWindowSize(dialMiniWindowSize);
+            currentMode = DialMode.Mini;
+            dialModeChange.Invoke(this, DialMode.Mini);
         }
 
         public override void OnUpdate(GameTime gameTime)
@@ -89,11 +91,20 @@ namespace LainBootlegDUX.GameContent
             targetSize *= relativeScale;
 
             if (!instant)
+            {
+                parent.Window.AllowUserResizing = false;
+
                 updateTransition = true;
+
+                DialMode state = targetMode == DialMode.Mini? DialMode.Miniing : DialMode.Extenting;
+                dialModeChange.Invoke(this, state);
+            }
             else
             {
                 currentMode = targetMode;
                 UpdateWindowSize(targetSize);
+
+                dialModeChange.Invoke(this, targetMode);
             }
         }
 
@@ -112,8 +123,6 @@ namespace LainBootlegDUX.GameContent
             if (!updateTransition)
                 return;
 
-            parent.Window.AllowUserResizing = false;
-
             transitionState += gt.deltaTime * transitionSpeed;
             transitionState = Math.Clamp(transitionState, 0, 1);
             Vector2 newSize = Vector2.Lerp(lastSize, targetSize, transitionState);
@@ -128,6 +137,8 @@ namespace LainBootlegDUX.GameContent
                 transitionState = 0;
 
                 parent.Window.AllowUserResizing = true;
+
+                dialModeChange.Invoke(this, targetMode);
             }
         }
 
@@ -141,7 +152,9 @@ namespace LainBootlegDUX.GameContent
         {
             None,
             Mini,
-            Extented
+            Extented,
+            Miniing,
+            Extenting
         }
     }
 }

@@ -11,9 +11,14 @@ namespace LainBootlegDUX.GameContent
 {
     public class Dial : GameEntity
     {
-        public LainDial lainDial;
+        public LainDial lainDial { get; set; }
+
+        public Vector2Int dialMiniImageSize { get; private set; } = new Vector2Int(200, 128);
+
 
         Texture2D texture;
+
+        LainDial.DialMode dialMode;
 
         public Dial(string entityName, GameScene scene) : base(entityName, scene)
         {
@@ -21,7 +26,12 @@ namespace LainBootlegDUX.GameContent
 
         public override void OnInitialize()
         {
+            lainDial.dialModeChange += OnDialModeChange;
+        }
 
+        private void OnDialModeChange(object sender, LainDial.DialMode dialModeState)
+        {
+            dialMode = dialModeState;
         }
 
         public override void OnLoadContent()
@@ -36,11 +46,26 @@ namespace LainBootlegDUX.GameContent
 
         public override void OnDraw(GameTime gameTime)
         {
+            switch (dialMode)
+            {
+                case LainDial.DialMode.Mini:
+                    DrawMiniDial();
+                    break;
+            }
+        }
+
+        private void DrawMiniDial()
+        {
             Rectangle rectangle = graphicDevice.PresentationParameters.Bounds;
-            //int scaledXOffset = (int)MathU.MapClampRanged(rectangle.Width, 0, lainDial.dialMiniWindowSize.x, 0, lainDial.dialMiniWindowSize.x);
-            //int scaledYOffset = (int)MathU.MapClampRanged(rectangle.Height, 0, lainDial.dialMiniWindowSize.y, 0, lainDial.dialMiniWindowSize.y);
-            //rectangle.Location = new Point(scaledXOffset, scaledYOffset);
-            spriteBth.Draw(texture, rectangle, Color.White);
+            int scaledXOffset = (int)MathU.MapClampRanged(rectangle.Width, 0, lainDial.dialMiniWindowSize.x, 0, lainDial.dialMiniWindowSize.x);
+            int scaledYOffset = (int)MathU.MapClampRanged(rectangle.Height, 0, lainDial.dialMiniWindowSize.y, 0, lainDial.dialMiniWindowSize.y);
+            rectangle.Location = new Point(scaledXOffset, scaledYOffset);
+
+            Vector2Int dialSize = dialMiniImageSize;
+
+            Rectangle dialRect = new Rectangle(-lainDial.dialMiniImageOffset.x, -lainDial.dialMiniImageOffset.y, dialSize.x, dialSize.y);
+
+            spriteBth.Draw(texture, dialRect, Color.White);
         }
     }
 }
