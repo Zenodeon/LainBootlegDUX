@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace LainBootlegDUX.GameContent
 {
-    public static class Texture2DHelper
+    public static class Texture2DUtility
     {
         public static Texture2D LoadTexture2D(this GraphicsDevice graphicsDevice, string assetPath)
         {
