@@ -25,9 +25,10 @@ namespace LainBootlegDUX.GameContent
         private DialMode targetMode;
         private Vector2 lastSize;
         private Vector2 targetSize;
-        private float transitionSpeed = 20;
+        private float transitionSpeed = 5f;
         private float transitionState = 0;
         private bool updateTransition = false;
+        public float modeState { get; private set; } = 0;
 
         Dial dial;
 
@@ -52,9 +53,9 @@ namespace LainBootlegDUX.GameContent
             dialModeChange.Invoke(this, DialMode.Mini);
         }
 
-        public override void OnUpdate(GameTime gameTime)
+        public override void OnUpdate(GameTime gt)
         {
-
+            UpdateWindowModeTransition(gt);
         }
 
         bool release = true;
@@ -73,8 +74,6 @@ namespace LainBootlegDUX.GameContent
                         SwitchMode(dialMode);
                     }
                 }
-
-            UpdateWindowModeTransition(gt);
         }
 
         private void SwitchMode(DialMode mode, bool instant = false)
@@ -128,6 +127,11 @@ namespace LainBootlegDUX.GameContent
             Vector2 newSize = Vector2.Lerp(lastSize, targetSize, transitionState);
 
             UpdateWindowSize(newSize);
+
+            if (targetMode == DialMode.Mini)
+                modeState = MathU.MapClampRanged(transitionState, 0, 1, 1, 0);
+            else
+                modeState = transitionState;
 
             if (transitionState == 1)
             {
