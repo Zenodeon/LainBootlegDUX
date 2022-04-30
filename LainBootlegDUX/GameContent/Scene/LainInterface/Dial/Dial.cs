@@ -21,18 +21,13 @@ namespace LainBootlegDUX.GameContent
 
         LainDial.DialMode dialMode;
 
-        float dialTransitionState = 0;
-        float transitionExtendingStartOffset = 0f;
-        float transitionMiniingStartOffset = 0;
-        float transitionSpeed = 5;
-
-
         public Dial(string entityName, GameScene scene) : base(entityName, scene)
         {
         }
 
         public override void OnInitialize()
         {
+            LainTextureManager.textureModeChange += (object o, LainTextureManager.LainTextureMode mode) => LoadDialTextures();
             lainDial.dialModeChange += OnDialModeChange;
         }
 
@@ -44,62 +39,31 @@ namespace LainBootlegDUX.GameContent
         public override void OnLoadContent()
         {
             LoadDialTextures();
-            
         }
 
         public override void OnUpdate(GameTime gt)
         {
-            UpdateDialTransitionState(gt);
         }
 
         public override void OnDraw(GameTime gt)
         {
-            DrawDial();
+            DrawDial(lainDial.modeState);
         }
 
-        private void UpdateDialTransitionState(GameTime gt)
+        private void DrawDial(float state)
         {
-            float intervalStep = gt.deltaTime * transitionSpeed;
-
-            switch (dialMode)
-            {
-                case LainDial.DialMode.Mini:
-                case LainDial.DialMode.Miniing:
-
-                    if (lainDial.transitionState >= transitionMiniingStartOffset)
-                        dialTransitionState -= intervalStep;
-
-                    break;
-
-                case LainDial.DialMode.Extented:
-                case LainDial.DialMode.Extenting:
-
-                    if (lainDial.transitionState >= transitionExtendingStartOffset)
-                        dialTransitionState += intervalStep;
-
-                    break;
-            }
-
-            dialTransitionState = MathHelper.Clamp(dialTransitionState, 0, 1);
-
-            DLog.Log("Dial Transition State : " + dialTransitionState);
-        }
-
-        private void DrawDial()
-        {
-            Texture2D dialTexture = GetStateTexture(dialTransitionState);
+            Texture2D dialTexture = GetStateTexture(state);
 
             Rectangle rect = graphicDevice.PresentationParameters.Bounds;
 
-            Vector2 windowRelativeSize = MathU.MapClampRanged(dialTransitionState, 0, 1, lainDial.dialMiniWindowSize, lainDial.dialExtentionWindowSize);
+            Vector2 windowRelativeSize = MathU.MapClampRanged(state, 0, 1, lainDial.dialMiniWindowSize, lainDial.dialExtentionWindowSize);
             Vector2 scale = MathU.MapClampRanged(new Vector2(rect.Width, rect.Height), Vector2.Zero, windowRelativeSize, Vector2.Zero, Vector2.One);
-            Vector2 imageOffset = MathU.MapClampRanged(dialTransitionState, 0, 1, lainDial.dialMiniImageOffset, Vector2.Zero);
+            Vector2 imageOffset = MathU.MapClampRanged(state, 0, 1, lainDial.dialMiniImageOffset, Vector2.Zero);
 
             Vector2 imageRelativeSize = new Vector2(dialTexture.Width, dialTexture.Height);
-            //Vector2 scaleVector = new Vector2(scale.x, scale.y);
-            Vector2 scaleVector = new Vector2(1, 1);
+            Vector2 scaleVector = new Vector2(scale.x, scale.y) / LainTextureManager.scaleFactor;
 
-            Vector2Int dialOffset = imageOffset * -scaleVector;
+            Vector2Int dialOffset = imageOffset * -scaleVector * LainTextureManager.scaleFactor;
             Vector2Int dialSize = imageRelativeSize * scaleVector;
 
             Rectangle dialRect = new Rectangle(dialOffset.x, dialOffset.y, dialSize.x, dialSize.y);
@@ -115,6 +79,10 @@ namespace LainBootlegDUX.GameContent
 
         private void LoadDialTextures()
         {
+            dialTextures.Clear();
+
+            LainTextureManager.StartGraphicsDevice(graphicDevice);
+
             AddDialTexture(460);
 
             AddDialTexture(461);
@@ -125,12 +93,12 @@ namespace LainBootlegDUX.GameContent
 
             AddDialTexture(485);
 
-            dialTextureInterval = 1f / dialTextures.Count;
-        }
+            LainTextureManager.EndGraphicsDevice();
 
-        private void AddDialTexture(int imageID)
-        {
-            dialTextures.Add(graphicDevice.LoadTexture2D($"Asset/lainSprite/bootlegSprites/{imageID}.png"));
+            dialTextureInterval = 1f / dialTextures.Count;
+
+            void AddDialTexture(int id)
+                => dialTextures.Add(LainTextureManager.GetLainTexture(id));
         }
     }
 }

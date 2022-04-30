@@ -6,6 +6,8 @@ namespace LainBootlegDUX.GameContent
 {
     public class LainInterfaceScene : GameScene
     {
+        private bool release;
+
         public LainInterfaceScene()
         {
             AddEntity(new LainDial("LainDial", this));
@@ -28,7 +30,15 @@ namespace LainBootlegDUX.GameContent
 
         public override void OnDraw(GameTime gameTime)
         {
+            if (Keyboard.GetState(PlayerIndex.One).IsKeyUp(Keys.H))
+                release = true;
 
+            if (release)
+                if (Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.H))
+                {
+                    release = false;
+                    LainTextureManager.ToggleTextureMode();
+                }
         }
     }
 }
