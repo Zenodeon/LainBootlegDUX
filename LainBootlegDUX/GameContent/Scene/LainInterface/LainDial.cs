@@ -22,13 +22,14 @@ namespace LainBootlegDUX.GameContent
         //public Vector2Int dialMiniImageOffset { get; private set; } = new Vector2Int(54, 54);
 
         public DialMode currentMode { get; private set; } = DialMode.None;
+        public float transitionState { get; private set; } = 0;
+        public float modeState { get; private set; } = 0;
+
         private DialMode targetMode;
         private Vector2 lastSize;
         private Vector2 targetSize;
         private float transitionSpeed = 5f;
-        private float transitionState = 0;
         private bool updateTransition = false;
-        public float modeState { get; private set; } = 0;
 
         Dial dial;
 
@@ -89,10 +90,16 @@ namespace LainBootlegDUX.GameContent
             Vector2 relativeScale = GetRelativeScale();
             targetSize *= relativeScale;
 
+            if (targetMode == DialMode.Mini)
+                modeState = MathU.MapClampRanged(transitionState, 0, 1, 1, 0);
+            else
+                modeState = transitionState;
+
             if (!instant)
             {
                 parent.Window.AllowUserResizing = false;
 
+                transitionState = 0;
                 updateTransition = true;
 
                 DialMode state = targetMode == DialMode.Mini? DialMode.Miniing : DialMode.Extenting;
@@ -128,17 +135,11 @@ namespace LainBootlegDUX.GameContent
 
             UpdateWindowSize(newSize);
 
-            if (targetMode == DialMode.Mini)
-                modeState = MathU.MapClampRanged(transitionState, 0, 1, 1, 0);
-            else
-                modeState = transitionState;
-
             if (transitionState == 1)
             {
                 updateTransition = false;
 
                 currentMode = targetMode;
-                transitionState = 0;
 
                 parent.Window.AllowUserResizing = true;
 

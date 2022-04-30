@@ -21,6 +21,12 @@ namespace LainBootlegDUX.GameContent
 
         LainDial.DialMode dialMode;
 
+        float dialTransitionState = 0;
+        float transitionExtendingStartOffset = 0f;
+        float transitionMiniingStartOffset = 0;
+        float transitionSpeed = 5;
+
+
         public Dial(string entityName, GameScene scene) : base(entityName, scene)
         {
         }
@@ -41,29 +47,58 @@ namespace LainBootlegDUX.GameContent
             
         }
 
-        public override void OnUpdate(GameTime gameTime)
+        public override void OnUpdate(GameTime gt)
         {
-
+            UpdateDialTransitionState(gt);
         }
 
-        public override void OnDraw(GameTime gameTime)
+        public override void OnDraw(GameTime gt)
         {
-            DrawDial(lainDial.modeState);
+            DrawDial();
         }
 
-        private void DrawDial(float state)
+        private void UpdateDialTransitionState(GameTime gt)
         {
-            Texture2D dialTexture = GetStateTexture(state);
+            float intervalStep = gt.deltaTime * transitionSpeed;
+
+            switch (dialMode)
+            {
+                case LainDial.DialMode.Mini:
+                case LainDial.DialMode.Miniing:
+
+                    if (lainDial.transitionState >= transitionMiniingStartOffset)
+                        dialTransitionState -= intervalStep;
+
+                    break;
+
+                case LainDial.DialMode.Extented:
+                case LainDial.DialMode.Extenting:
+
+                    if (lainDial.transitionState >= transitionExtendingStartOffset)
+                        dialTransitionState += intervalStep;
+
+                    break;
+            }
+
+            dialTransitionState = MathHelper.Clamp(dialTransitionState, 0, 1);
+
+            DLog.Log("Dial Transition State : " + dialTransitionState);
+        }
+
+        private void DrawDial()
+        {
+            Texture2D dialTexture = GetStateTexture(dialTransitionState);
 
             Rectangle rect = graphicDevice.PresentationParameters.Bounds;
 
-            Vector2 windowRelativeSize = MathU.MapClampRanged(state, 0, 1, lainDial.dialMiniWindowSize, lainDial.dialExtentionWindowSize);
+            Vector2 windowRelativeSize = MathU.MapClampRanged(dialTransitionState, 0, 1, lainDial.dialMiniWindowSize, lainDial.dialExtentionWindowSize);
             Vector2 scale = MathU.MapClampRanged(new Vector2(rect.Width, rect.Height), Vector2.Zero, windowRelativeSize, Vector2.Zero, Vector2.One);
-            Vector2 imageOffset = MathU.MapClampRanged(state, 0, 1, lainDial.dialMiniImageOffset, Vector2.Zero);
+            Vector2 imageOffset = MathU.MapClampRanged(dialTransitionState, 0, 1, lainDial.dialMiniImageOffset, Vector2.Zero);
 
             Vector2 imageRelativeSize = new Vector2(dialTexture.Width, dialTexture.Height);
-            Vector2 scaleVector = new Vector2(scale.x, scale.y);
-            DLog.Log(imageRelativeSize);
+            //Vector2 scaleVector = new Vector2(scale.x, scale.y);
+            Vector2 scaleVector = new Vector2(1, 1);
+
             Vector2Int dialOffset = imageOffset * -scaleVector;
             Vector2Int dialSize = imageRelativeSize * scaleVector;
 
@@ -75,9 +110,7 @@ namespace LainBootlegDUX.GameContent
         private Texture2D GetStateTexture(float state)
         {
             int textureIndex = (state * (dialTextures.Count - 1)).RoundOff();
-            //DLog.Log("Index : " + textureIndex + " || " + state);
             return dialTextures[textureIndex];
-            //return null;
         }
 
         private void LoadDialTextures()
@@ -93,8 +126,6 @@ namespace LainBootlegDUX.GameContent
             AddDialTexture(485);
 
             dialTextureInterval = 1f / dialTextures.Count;
-
-            DLog.Log(dialTextures.Count + " || " + dialTextureInterval);
         }
 
         private void AddDialTexture(int imageID)
