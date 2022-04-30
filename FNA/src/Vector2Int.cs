@@ -46,6 +46,12 @@ namespace Microsoft.Xna.Framework
 		public static Vector2Int operator *(Vector2Int vectorA, Vector2Int vectorB)
 			=> new Vector2Int(vectorA.vector * vectorB.vector);
 
+		public static Vector2Int operator *(Vector2Int vectorA, float value)
+			=> new Vector2Int(vectorA.vector * value);
+
+		public static Vector2Int operator *(Vector2Int vectorA, int value)
+			=> new Vector2Int(vectorA.vector * value);
+
 		public static bool operator !=(Vector2Int vectorA, Vector2Int vectorB)
 			=> !(vectorA == vectorB);
 
