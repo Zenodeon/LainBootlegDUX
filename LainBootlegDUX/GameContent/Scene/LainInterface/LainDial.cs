@@ -124,7 +124,8 @@ namespace LainBootlegDUX.GameContent
             if (!updateTransition)
                 return;
 
-            transitionState += gt.deltaTime * transitionSpeed;
+            //transitionState += gt.deltaTime * transitionSpeed;
+            transitionState += MathU.Ease(transitionState, gt.deltaTime * transitionSpeed, 0.25f, 1f);
             transitionState = Math.Clamp(transitionState, 0, 1);
             Vector2 newSize = Vector2.Lerp(lastSize, targetSize, transitionState);
 
