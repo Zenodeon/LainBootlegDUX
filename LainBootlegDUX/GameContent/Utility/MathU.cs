@@ -69,5 +69,17 @@ namespace LainBootlegDUX.GameContent
             Nearest,
             Floor
         }
+
+        public static float Ease(float currentValue, float deltaTime, float easePeek = 0.5f, float peekValue = 1f)
+        {
+            float clamp = peekValue;
+
+            if (currentValue < easePeek)
+                clamp = MapClampRanged(currentValue, 0, easePeek, 0.01f, peekValue);
+            else if (currentValue > easePeek)
+                clamp = MapClampRanged(currentValue, easePeek, 1, peekValue, 0.01f);
+
+            return deltaTime * clamp;
+        }
     }
 }
