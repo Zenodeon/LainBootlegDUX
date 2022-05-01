@@ -1,11 +1,13 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Audio;
 
 namespace LainBootlegDUX.GameContent
 {
@@ -21,6 +23,9 @@ namespace LainBootlegDUX.GameContent
 
         LainDial.DialMode dialMode;
 
+        SoundEffect expandingSFX;
+        SoundEffect shrinkingSFX;
+
         public Dial(string entityName, GameScene scene) : base(entityName, scene)
         {
         }
@@ -28,17 +33,31 @@ namespace LainBootlegDUX.GameContent
         public override void OnInitialize()
         {
             LainTextureManager.textureModeChange += (object o, LainTextureManager.LainTextureMode mode) => LoadDialTextures();
+            LainSFXManager.sfxModeChange += (object o, LainSFXManager.LainSFXMode mode) => LoadDialSFX();
+
             lainDial.dialModeChange += OnDialModeChange;
         }
 
         private void OnDialModeChange(object sender, LainDial.DialMode dialModeState)
         {
             dialMode = dialModeState;
+
+            switch (dialMode)
+            {
+                case LainDial.DialMode.Expanding:
+                    expandingSFX.Play();
+                    break;
+
+                case LainDial.DialMode.Shrinking:
+                    shrinkingSFX.Play();
+                    break;
+            }
         }
 
         public override void OnLoadContent()
         {
             LoadDialTextures();
+            LoadDialSFX();
         }
 
         public override void OnUpdate(GameTime gt)
@@ -99,6 +118,12 @@ namespace LainBootlegDUX.GameContent
 
             void AddDialTexture(int id)
                 => dialTextures.Add(LainTextureManager.GetLainTexture(id));
+        }
+
+        private void LoadDialSFX()
+        {
+            expandingSFX = LainSFXManager.GetLainSFX(2);
+            shrinkingSFX = LainSFXManager.GetLainSFX(3);
         }
     }
 }

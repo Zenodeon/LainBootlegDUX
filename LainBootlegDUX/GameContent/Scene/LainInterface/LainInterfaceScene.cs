@@ -20,12 +20,10 @@ namespace LainBootlegDUX.GameContent
 
         public override void OnLoadContent()
         {
-
         }
 
         public override void OnUpdate(GameTime gameTime)
         {
-           //FAudio.
         }
 
         public override void OnDraw(GameTime gameTime)

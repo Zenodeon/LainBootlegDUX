@@ -27,7 +27,7 @@ namespace LainBootlegDUX.GameContent
         private DialMode targetMode;
         private Vector2 lastSize;
         private Vector2 targetSize;
-        private float transitionSpeed = 5f;
+        private float transitionSpeed = 10f;
         private float transitionState = 0;
         private bool updateTransition = false;
 
@@ -97,7 +97,7 @@ namespace LainBootlegDUX.GameContent
                 transitionState = 0;
                 updateTransition = true;
 
-                DialMode state = targetMode == DialMode.Mini? DialMode.Miniing : DialMode.Extenting;
+                DialMode state = targetMode == DialMode.Mini? DialMode.Shrinking : DialMode.Expanding;
                 dialModeChange.Invoke(this, state);
             }
             else
@@ -125,7 +125,7 @@ namespace LainBootlegDUX.GameContent
                 return;
 
             //transitionState += gt.deltaTime * transitionSpeed;
-            transitionState += MathU.Ease(transitionState, gt.deltaTime * transitionSpeed, 0.25f, 1f);
+            transitionState += MathU.Ease(transitionState, gt.deltaTime * transitionSpeed, 0.2f, 1f);
             transitionState = Math.Clamp(transitionState, 0, 1);
             Vector2 newSize = Vector2.Lerp(lastSize, targetSize, transitionState);
 
@@ -159,8 +159,8 @@ namespace LainBootlegDUX.GameContent
             None,
             Mini,
             Extented,
-            Miniing,
-            Extenting
+            Shrinking,
+            Expanding
         }
     }
 }
